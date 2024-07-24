@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        .calculator {
+            width: 300px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .display {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: right;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+
+<body >
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button id="clear">C</button>
+            <button id="divide">/</button>
+            <button id="multiply">*</button>
+            <button id="subtract">-</button>
+            <button id="7">7</button>
+            <button id="8">8</button>
+            <button id="9">9</button>
+            <button id="add">+</button>
+            <button id="4">4</button>
+            <button id="5">5</button>
+            <button id="6">6</button>
+            <button id="equals">=</button>
+            <button id="1">1</button>
+            <button id="2">2</button>
+            <button id="3">3</button>
+            <button id="decimal">.</button>
+            <button id="0">0</button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to the display and all the buttons
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('button');
+
+        // Initialize the calculator state
+        let currentValue = '0';
+        let operator = null;
+        let waitingForSecondNumber = false;
+
+        // Function to update the display
+        function updateDisplay() {
+            display.textContent = currentValue;
+        }
+
+        // Function to handle button clicks
+        function handleButtonClick(event) {
+            const button = event.target;
+            const value = button.textContent;
+
+            switch (value) {
+                case 'C':
+                    currentValue = '0';
+                    operator = null;
+                    waitingForSecondNumber = false;
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    if (operator !== null) {
+                        calculate();
+                    }
+                    operator = value;
+                    waitingForSecondNumber = true;
+                    break;
+                case '=':
+                    calculate();
+                    waitingForSecondNumber = false;
+                    break;
+                case '.':
+                    if (!currentValue.includes('.')) {
+                        currentValue += '.';
+                    }
+                    break;
+                default:
+                    if (waitingForSecondNumber) {
+                        currentValue = value;
+                        waitingForSecondNumber = false;
+                    } else if (currentValue === '0') {
+                        currentValue = value;
+                    } else {
+                        currentValue += value;
+                    }
+            }
+
+            updateDisplay();
+        }
+
+        // Function to perform the calculation
+        function calculate() {
+            const firstNumber = parseFloat(currentValue);
+            const secondNumber = parseFloat(display.textContent);
+            let result;
+
+            switch (operator) {
+                case '+':
+                    result = firstNumber + secondNumber;
+                    break;
+                case '-':
+                    result = firstNumber - secondNumber;
+                    break;
+                case '*':
+                    result = firstNumber * secondNumber;
+                    break;
+                case '/':
+                    result = firstNumber / secondNumber;
+                    break;
+                default:
+                    return;
+            }
+
+            currentValue = result.toString();
+            operator = null;
+        }
+
+        // Add click event listeners to the buttons
+        buttons.forEach((button) => {
+            button.addEventListener('click', handleButtonClick);
+        });
+    </script>
+</body>
+
+</html>
